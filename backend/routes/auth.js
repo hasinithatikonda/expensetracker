@@ -55,6 +55,9 @@ router.post('/register', [
     });
   } catch (error) {
     console.error('Register error:', error);
+    if (error.name === 'MongooseError' && /buffering timed out/i.test(error.message)) {
+      return res.status(503).json({ message: 'Database is unavailable. Please try again in a moment.' });
+    }
     res.status(500).json({ message: 'Server error during registration' });
   }
 });
@@ -103,6 +106,9 @@ router.post('/login', [
     });
   } catch (error) {
     console.error('Login error:', error);
+    if (error.name === 'MongooseError' && /buffering timed out/i.test(error.message)) {
+      return res.status(503).json({ message: 'Database is unavailable. Please try again in a moment.' });
+    }
     res.status(500).json({ message: 'Server error during login' });
   }
 });

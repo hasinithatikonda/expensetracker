@@ -1,19 +1,14 @@
-const OpenAI = require('openai');
+const Groq = require('groq-sdk');
 const fs = require('fs');
 const path = require('path');
 
-// Check if OpenAI API key is configured
-const hasOpenAIKey = process.env.OPENAI_API_KEY && 
-                     process.env.OPENAI_API_KEY !== 'your_openai_api_key_here' &&
-                     process.env.OPENAI_API_KEY.startsWith('sk-');
-
-// Check if Groq API key is configured (legacy)
+// Check if Groq API key is configured
 const hasGroqKey = process.env.GROQ_API_KEY && 
                    process.env.GROQ_API_KEY !== 'your_groq_api_key_here' &&
                    process.env.GROQ_API_KEY.startsWith('gsk_');
 
-const openai = hasOpenAIKey ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+const groq = hasGroqKey ? new Groq({
+  apiKey: process.env.GROQ_API_KEY
 }) : null;
 
 /**
@@ -23,9 +18,9 @@ const openai = hasOpenAIKey ? new OpenAI({
  */
 async function extractExpenseFromReceipt(imagePath) {
   try {
-    // Check if OpenAI API is configured
-    if (!hasOpenAIKey) {
-      throw new Error('OPENAI_API_KEY_NOT_CONFIGURED: Please add your OpenAI API key to backend/.env file. Get a key at https://platform.openai.com/api-keys');
+    // Check if Groq API is configured
+    if (!hasGroqKey) {
+      throw new Error('GROQ_API_KEY_NOT_CONFIGURED: Please add your Groq API key to backend/.env file. Get a key at https://console.groq.com');
     }
 
     // Read image file and convert to base64
@@ -33,7 +28,7 @@ async function extractExpenseFromReceipt(imagePath) {
     const base64Image = imageBuffer.toString('base64');
     const mimeType = getMimeType(imagePath);
 
-    // Create prompt for OpenAI
+    // Create prompt for Groq
     const prompt = `Analyze this receipt/bill image and extract the following information. Return ONLY a valid JSON object with no additional text:
 
 {
@@ -53,9 +48,9 @@ Important:
 - Be accurate with the amount
 - Return ONLY the JSON object, no other text`;
 
-    // Call OpenAI Vision API
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    // Call Groq Vision API
+    const response = await groq.chat.completions.create({
+      model: "meta-llama/llama-4-scout-17b-16e-instruct",
       messages: [
         {
           role: "user",
@@ -98,7 +93,7 @@ Important:
     };
 
   } catch (error) {
-    console.error('OpenAI API error:', error);
+    console.error('Groq API error:', error);
     throw new Error(`Failed to extract expense details: ${error.message}`);
   }
 }

@@ -111,17 +111,17 @@ function AddExpense() {
       // Check for specific error types
       if (errorMessage.includes('insufficient_quota') || errorMessage.includes('exceeded your current quota')) {
         toast.error(
-          '⚠️ OpenAI API quota exceeded. Please add billing at platform.openai.com or use Manual Entry tab.',
+          '⚠️ Groq API rate limit or quota exceeded. Please check your account at console.groq.com or use Manual Entry tab.',
           { duration: 8000 }
         );
-      } else if (errorMessage.includes('OPENAI_API_KEY_NOT_CONFIGURED') || errorMessage.includes('OpenAI API key')) {
+      } else if (errorMessage.includes('GROQ_API_KEY_NOT_CONFIGURED') || errorMessage.includes('Groq API key')) {
         toast.error(
-          'AI feature requires OpenAI API key. Please add your API key to backend/.env or use Manual Entry instead.',
+          'AI feature requires Groq API key. Please add your API key to backend/.env or use Manual Entry instead.',
           { duration: 6000 }
         );
-      } else if (errorMessage.includes('Invalid API Key') || errorMessage.includes('Incorrect API key')) {
+      } else if (errorMessage.includes('Invalid API Key') || errorMessage.includes('Incorrect API key') || errorMessage.includes('Unauthorized')) {
         toast.error(
-          'Invalid OpenAI API key. Please check your key at platform.openai.com or use Manual Entry.',
+          'Invalid Groq API key. Please check your key at console.groq.com or use Manual Entry.',
           { duration: 6000 }
         );
       } else {
@@ -319,7 +319,7 @@ function AddExpense() {
                   Upload your receipt and AI will extract details automatically.
                 </p>
                 <p className="text-xs text-blue-600">
-                  <strong>Note:</strong> Requires OpenAI API key with billing enabled. Get started at <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" className="underline">platform.openai.com</a>
+                  <strong>Note:</strong> Requires Groq API key. Get started at <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="underline">console.groq.com</a>
                 </p>
                 <p className="text-xs text-gray-600 mt-2">
                   💡 <strong>Tip:</strong> Manual Entry is faster and doesn't require any setup!
