@@ -29,8 +29,23 @@ const settingsRoutes = require('./routes/settings');
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// Middleware — allow Vercel frontend and local dev
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowed = [
+      process.env.FRONTEND_URL,
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+    ].filter(Boolean);
+    if (allowed.includes(origin) || /\.vercel\.app$/i.test(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS blocked origin: ${origin}`));
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
